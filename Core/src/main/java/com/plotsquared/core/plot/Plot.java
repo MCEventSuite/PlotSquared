@@ -2175,6 +2175,15 @@ public class Plot {
      * Export the plot as a schematic to the configured output directory.
      */
     public void export(final RunnableVal<Boolean> whenDone) {
+        String name = Plot.this.id + "," + Plot.this.area + ',' + MainUtil
+                .getName(Plot.this.getOwnerAbs());
+        export(name, whenDone);
+    }
+
+    /**
+     * Export the plot as a schematic to the specified location
+     */
+    public void export(String exportLocation, final RunnableVal<Boolean> whenDone){
         SchematicHandler.manager.getCompoundTag(this, new RunnableVal<CompoundTag>() {
             @Override public void run(final CompoundTag value) {
                 if (value == null) {
@@ -2184,10 +2193,7 @@ public class Plot {
                     }
                 } else {
                     TaskManager.runTaskAsync(() -> {
-                        String name = Plot.this.id + "," + Plot.this.area + ',' + MainUtil
-                            .getName(Plot.this.getOwnerAbs());
-                        boolean result = SchematicHandler.manager.save(value,
-                            Settings.Paths.SCHEMATICS + File.separator + name + ".schem");
+                        boolean result = SchematicHandler.manager.save(value, exportLocation);
                         if (whenDone != null) {
                             whenDone.value = result;
                             TaskManager.runTask(whenDone);
